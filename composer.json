@@ -1,0 +1,31 @@
+{
+    "name": "glimmer/tenancy",
+    "description": "Opinionated and extended Spatie Multitenancy",
+    "type": "library",
+    "require": {
+        "spatie/laravel-multitenancy": "^4.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.18",
+        "pestphp/pest": "^3.7",
+        "orchestra/testbench": "^9.7"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Glimmer\\Tenancy\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Haruki1707",
+            "email": "72423267+Haruki1707@users.noreply.github.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}
