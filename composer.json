@@ -3,17 +3,25 @@
     "description": "Opinionated and extended Spatie Multitenancy",
     "type": "library",
     "require": {
+        "php": "^8.3",
         "spatie/laravel-multitenancy": "^4.0"
     },
     "require-dev": {
         "laravel/pint": "^1.18",
         "pestphp/pest": "^3.7",
-        "orchestra/testbench": "^9.7"
+        "orchestra/testbench": "^9.7",
+        "pestphp/pest-plugin-laravel": "^3.0"
     },
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Glimmer\\Tenancy\\": "src/"
+            "Glimmer\\Tenancy\\": "src/",
+            "Glimmer\\Tenancy\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Glimmer\\Tenancy\\Tests\\": "tests/"
         }
     },
     "authors": [
@@ -27,5 +35,21 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Glimmer\\Tenancy\\TenancyServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "lint": [
+            "@php vendor/bin/pint --ansi"
+        ],
+        "test": [
+            "@clear",
+            "@php vendor/bin/pest"
+        ]
     }
 }
