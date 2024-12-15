@@ -15,6 +15,12 @@ return [
      * This class is responsible for determining which tenant should be current for the given request.
      *
      * This class should extend `Spatie\Multitenancy\TenantFinder\TenantFinder`
+     *
+     * Available tenant finders:
+     *  `Glimmer\Tenancy\TenantFinders\DomainTenantFinder`
+     *  `Glimmer\Tenancy\TenantFinders\SubDomainTenantFinder`
+     *  `Glimmer\Tenancy\TenantFinders\DomainAndSubDomainTenantFinder`
+     *  `Glimmer\Tenancy\TenantFinders\PathParameterTenantFinder`
      */
     'tenant_finder' => null,
 
