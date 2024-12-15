@@ -11,7 +11,8 @@
 |
 */
 
-// pest()->extend(Tests\TestCase::class)->in('Feature');
+pest()->extend(Glimmer\Tenancy\Tests\TestCase::class)->in('Feature');
+pest()->extend(Glimmer\Tenancy\Tests\TestCase::class)->in('Unit');
 
 /*
 |--------------------------------------------------------------------------
