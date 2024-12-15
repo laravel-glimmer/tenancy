@@ -38,14 +38,13 @@ return [
      */
     'switch_tenant_tasks' => [
         // \Spatie\Multitenancy\Tasks\PrefixCacheTask::class,
-        // \Spatie\Multitenancy\Tasks\SwitchTenantDatabaseTask::class,
-        // \Spatie\Multitenancy\Tasks\SwitchRouteCacheTask::class,
+        // \Glimmer\Tenancy\Tasks\SwitchDatabaseConnectionTask::class,
     ],
 
     /*
      * This class is the model used for storing configuration on tenants.
      *
-     * It must  extend `Spatie\Multitenancy\Models\Tenant::class` or
+     * It must extend `Spatie\Multitenancy\Models\Tenant::class` or
      * implement `Spatie\Multitenancy\Contracts\IsTenant::class` interface
      */
     'tenant_model' => Glimmer\Tenancy\Models\Tenant::class,
