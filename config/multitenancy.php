@@ -42,6 +42,7 @@ return [
         // \Glimmer\Tenancy\Tasks\SwitchDatabaseConnectionTask::class,
         // \Glimmer\Tenancy\Tasks\PrefixFilesystemTask::class,
         // \Glimmer\Tenancy\Tasks\PrefixScoutTask::class,
+        // \Glimmer\Tenancy\Tasks\PrefixSpatiePermissionTask::class,
     ],
 
     /*

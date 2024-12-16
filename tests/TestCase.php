@@ -12,12 +12,15 @@ use Illuminate\Support\Facades\Config;
 use Orchestra\Testbench\Attributes\WithMigration;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Spatie\Multitenancy\MultitenancyServiceProvider;
+use Spatie\Permission\PermissionServiceProvider;
 
 #[WithMigration]
 #[WithMigration('queue')]
 abstract class TestCase extends Orchestra
 {
     use RefreshDatabase;
+
+    protected $enablesPackageDiscoveries = true;
 
     protected function setUp(): void
     {
@@ -36,6 +39,7 @@ abstract class TestCase extends Orchestra
     protected function getPackageProviders($app): array
     {
         return [
+            PermissionServiceProvider::class,
             MultitenancyServiceProvider::class,
             TenancyServiceProvider::class,
         ];
