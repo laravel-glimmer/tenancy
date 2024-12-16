@@ -38,7 +38,9 @@ return [
      */
     'switch_tenant_tasks' => [
         // \Spatie\Multitenancy\Tasks\PrefixCacheTask::class,
+        // \Spatie\Multitenancy\Tasks\SwitchRouteCacheTask::class,
         // \Glimmer\Tenancy\Tasks\SwitchDatabaseConnectionTask::class,
+        // \Glimmer\Tenancy\Tasks\PrefixFilesystemTask::class,
     ],
 
     /*
