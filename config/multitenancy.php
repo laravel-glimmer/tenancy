@@ -41,6 +41,7 @@ return [
         // \Spatie\Multitenancy\Tasks\SwitchRouteCacheTask::class,
         // \Glimmer\Tenancy\Tasks\SwitchDatabaseConnectionTask::class,
         // \Glimmer\Tenancy\Tasks\PrefixFilesystemTask::class,
+        // \Glimmer\Tenancy\Tasks\PrefixScoutTask::class,
     ],
 
     /*
