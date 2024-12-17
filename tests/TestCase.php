@@ -48,6 +48,7 @@ abstract class TestCase extends Orchestra
     protected function getEnvironmentSetUp($app): void
     {
         Config::set('app.key', 'base64:'.base64_encode(random_bytes(32)));
+        Config::set('scout.driver', 'database');
         Config::set('multitenancy.tenant_finder', PathTenantFinder::class);
         Config::set('multitenancy.tenant_model', Tenant::class);
         Config::set('multitenancy.use_default_routes_groups', false);

@@ -5,6 +5,7 @@ namespace Glimmer\Tenancy\Jobs;
 use Glimmer\Tenancy\Jobs\Concerns\MaybeTenantAware;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Queue\Queueable;
 use InvalidArgumentException;
 use Spatie\Multitenancy\Contracts\IsTenant;
@@ -19,7 +20,6 @@ class SynchronizeSharedModel implements MaybeTenantAware, ShouldQueue
     public function __construct(
         public string $modelClass,
         public int|string $modelKey,
-        public bool $delete = false,
     ) {
         if (! class_exists($this->modelClass) || ! is_subclass_of($this->modelClass, Model::class)) {
             throw new InvalidArgumentException("The class {$this->modelClass} must be a valid Eloquent model.");
@@ -28,10 +28,14 @@ class SynchronizeSharedModel implements MaybeTenantAware, ShouldQueue
 
     public function handle(): void
     {
-        if ($this->delete) {
+        $model = $this->modelClass::when(
+            in_array(SoftDeletes::class, class_uses_recursive($this->modelClass)),
+            fn ($q) => $q->withTrashed()
+        )->find($this->modelKey);
+
+        if (! $model) {
             $modelAction = fn () => $this->deleteModel();
         } else {
-            $model = $this->modelClass::findOrFail($this->modelKey);
             $modelAction = fn () => $this->updateOrInsertModel($model);
         }
 

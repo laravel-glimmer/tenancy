@@ -17,6 +17,6 @@ trait IsSharedModel
     public static function bootIsSharedModel(): void
     {
         static::saved(fn (self $model) => SynchronizeSharedModel::dispatch($model::class, $model->getKey()));
-        static::deleted(fn (self $model) => SynchronizeSharedModel::dispatch($model::class, $model->getKey(), true));
+        static::deleted(fn (self $model) => SynchronizeSharedModel::dispatch($model::class, $model->getKey()));
     }
 }
