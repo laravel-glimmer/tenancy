@@ -2,7 +2,7 @@
 
 namespace Glimmer\Tenancy\Actions;
 
-use Glimmer\Tenancy\Jobs\MaybeTenantAware;
+use Glimmer\Tenancy\Jobs\Concerns\MaybeTenantAware;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Queue\Events\JobRetryRequested;
 use Illuminate\Support\Facades\Context;
