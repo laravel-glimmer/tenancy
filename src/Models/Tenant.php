@@ -2,11 +2,15 @@
 
 namespace Glimmer\Tenancy\Models;
 
+use Glimmer\Tenancy\Traits\HasTenantEvents;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Multitenancy\Models\Tenant as SpatieTenant;
 
 class Tenant extends SpatieTenant
 {
+    use HasTenantEvents, SoftDeletes;
+
     public $incrementing = false;
 
     public $usesUniqueIds = true;

@@ -16,6 +16,7 @@ class TenantFactory extends Factory
     {
         return [
             'id' => $this->faker->unique()->word(),
+            'name' => $this->faker->words(asText: true),
             'hosts' => [$this->faker->unique()->domainName()],
         ];
     }

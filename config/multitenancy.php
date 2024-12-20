@@ -54,6 +54,29 @@ return [
     'tenant_model' => Glimmer\Tenancy\Models\Tenant::class,
 
     /*
+     * Events jobs are triggered when a tenant is created, updated, deleted, restored, etc.
+     * https://laravel.com/docs/master/eloquent#events
+     *
+     * A valid event job is any class extending `Glimmer\Tenancy\Events\TenantEventQueue`.
+     * The jobs are dispatched in a chain.
+     * The jobs will receive the Tenant instance as `$tenant`, which can be used within the job.
+     * The jobs are not tenant-aware (you can use the `$tenant` to execute tenant-specific logic).
+     *
+     * Optionally, a 'catch' key can be added to an event with a callback that will be
+     * executed if a job in the chain fails, receiving a Throwable instance as an argument.
+     */
+    'tenant_events' => [
+        'created' => [
+            // \Glimmer\Tenancy\Jobs\TenantEvents\CreateDatabase::class,
+            // \Glimmer\Tenancy\Jobs\TenantEvents\MigrateDatabase::class,
+            // \Glimmer\Tenancy\Jobs\TenantEvents\SeedDatabase::class,
+            'catch' => function (Throwable $exception) {
+                // ...
+            },
+        ],
+    ],
+
+    /*
      * If there is a current tenant when dispatching a job, the id of the current tenant
      * will be automatically set on the job. When the job is executed, the set
      * tenant on the job will be made current.
