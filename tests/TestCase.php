@@ -6,6 +6,9 @@ use Glimmer\Tenancy\Facades\TenancyRoutes;
 use Glimmer\Tenancy\Models\Tenant;
 use Glimmer\Tenancy\TenancyServiceProvider;
 use Glimmer\Tenancy\TenantFinders\PathTenantFinder;
+use Glimmer\Tenancy\Tests\Stubs\Commands\TenantMaybeNoopCommand;
+use Glimmer\Tenancy\Tests\Stubs\Commands\TenantNoopCommand;
+use Illuminate\Console\Application as Artisan;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
@@ -38,11 +41,25 @@ abstract class TestCase extends Orchestra
 
     protected function getPackageProviders($app): array
     {
+        $this->bootCommands();
+
         return [
             PermissionServiceProvider::class,
             MultitenancyServiceProvider::class,
             TenancyServiceProvider::class,
         ];
+    }
+
+    protected function bootCommands()
+    {
+        Artisan::starting(function ($artisan) {
+            $artisan->resolveCommands([
+                TenantNoopCommand::class,
+                TenantMaybeNoopCommand::class,
+            ]);
+        });
+
+        return $this;
     }
 
     protected function getEnvironmentSetUp($app): void
