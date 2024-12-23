@@ -2,9 +2,11 @@
 
 namespace Glimmer\Tenancy;
 
+use Glimmer\Tenancy\Commands\TenantsArtisanCommand;
 use Glimmer\Tenancy\Facades\TenancyRoutes;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
+use Spatie\Multitenancy\Commands\TenantsArtisanCommand as SpatieTenantsArtisanCommand;
 
 class TenancyServiceProvider extends ServiceProvider
 {
@@ -20,14 +22,31 @@ class TenancyServiceProvider extends ServiceProvider
             __DIR__.'/../database/migrations' => database_path('migrations'),
         ]);
 
-        if (Config::get('multitenancy.use_default_routes_groups')) {
-            TenancyRoutes::landlord();
-            TenancyRoutes::tenant();
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                TenantsArtisanCommand::class,
+            ]);
+        } else {
+            if (Config::get('multitenancy.use_default_routes_groups')) {
+                TenancyRoutes::landlord();
+                TenancyRoutes::tenant();
+            }
         }
     }
 
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/multitenancy.php', 'multitenancy');
+
+        if ($this->app->runningInConsole()) {
+            $this->app->extend(SpatieTenantsArtisanCommand::class, function () {
+                return new TenantsArtisanCommand;
+            });
+        }
+    }
+
+    public function provides(): array
+    {
+        return [SpatieTenantsArtisanCommand::class];
     }
 }
