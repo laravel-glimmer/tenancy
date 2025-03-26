@@ -38,10 +38,12 @@ trait MaybeTenantAware
                 $this->info('Running command without tenant context. (landlord)');
 
                 return (int) $this->laravel->call([$this, 'handle']);
+                // @codeCoverageIgnoreStart
             default:
                 $this->error('Invalid answer.');
 
                 return -1;
+                // @codeCoverageIgnoreEnd
         }
     }
 }

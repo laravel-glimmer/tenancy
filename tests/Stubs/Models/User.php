@@ -12,6 +12,8 @@ class User extends Authenticatable
 
     protected $guarded = ['id'];
 
+    public static function bootSearchable() {}
+
     public function shouldBeSearchable(): false
     {
         return false;
