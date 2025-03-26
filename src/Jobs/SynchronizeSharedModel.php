@@ -4,6 +4,7 @@ namespace Glimmer\Tenancy\Jobs;
 
 use Glimmer\Tenancy\Jobs\Concerns\MaybeTenantAware;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Queue\Queueable;
@@ -17,6 +18,9 @@ class SynchronizeSharedModel implements MaybeTenantAware, ShouldQueue
 
     public int $tries = 0;
 
+    /**
+     * @param  class-string<Model>  $modelClass
+     */
     public function __construct(
         public string $modelClass,
         public int|string $modelKey,
@@ -28,9 +32,9 @@ class SynchronizeSharedModel implements MaybeTenantAware, ShouldQueue
 
     public function handle(): void
     {
-        $model = $this->modelClass::when(
+        $model = $this->modelClass::query()->when(
             in_array(SoftDeletes::class, class_uses_recursive($this->modelClass)),
-            fn ($q) => $q->withTrashed()
+            fn (Builder $q) => $q->withTrashed()
         )->find($this->modelKey);
 
         if (! $model) {
@@ -50,12 +54,12 @@ class SynchronizeSharedModel implements MaybeTenantAware, ShouldQueue
 
     public function deleteModel(): void
     {
-        $this->modelClass::find($this->modelKey)?->deleteQuietly();
+        $this->modelClass::query()->find($this->modelKey)?->deleteQuietly();
     }
 
     public function updateOrInsertModel(Model $model): void
     {
-        $model::updateOrInsert(
+        $model::query()->updateOrInsert(
             [$model->getKeyName() => $model->getKey()],
             $model->makeHidden($model->getKeyName())->toArray()
         );
