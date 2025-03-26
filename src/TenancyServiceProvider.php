@@ -3,7 +3,8 @@
 namespace Glimmer\Tenancy;
 
 use Glimmer\Tenancy\Commands\TenantsArtisanCommand;
-use Glimmer\Tenancy\Facades\TenancyRoutes;
+use Glimmer\Tenancy\Facades\TenancyRoute;
+use Glimmer\Tenancy\Services\TenancyRouteService;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Multitenancy\Commands\TenantsArtisanCommand as SpatieTenantsArtisanCommand;
@@ -26,12 +27,9 @@ class TenancyServiceProvider extends ServiceProvider
             $this->commands([
                 TenantsArtisanCommand::class,
             ]);
-        } else {
-            if (Config::get('multitenancy.use_default_routes_groups')) {
-                TenancyRoutes::landlord();
-                TenancyRoutes::tenant();
-            }
         }
+
+        $this->autoRegisterTenancyRoutes();
     }
 
     public function register(): void
@@ -43,10 +41,26 @@ class TenancyServiceProvider extends ServiceProvider
                 return new TenantsArtisanCommand;
             });
         }
+
+        $this->app->singleton(TenancyRouteService::class, function () {
+            return new TenancyRouteService;
+        });
     }
 
+    public function autoRegisterTenancyRoutes(): void
+    {
+        if (Config::get('multitenancy.use_default_routes_groups')) {
+            $routesPrefix = Config::get('multitenancy.routes_prefix', '');
+
+            TenancyRoute::landlord()->group(base_path($routesPrefix.'routes/landlord.php'));
+            TenancyRoute::tenant()->group(base_path($routesPrefix.'routes/tenant.php'));
+        }
+    }
+
+    // @codeCoverageIgnoreStart
     public function provides(): array
     {
         return [SpatieTenantsArtisanCommand::class];
     }
+    // @codeCoverageIgnoreEnd
 }

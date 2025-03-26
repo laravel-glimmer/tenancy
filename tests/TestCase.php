@@ -2,7 +2,7 @@
 
 namespace Glimmer\Tenancy\Tests;
 
-use Glimmer\Tenancy\Facades\TenancyRoutes;
+use Glimmer\Tenancy\Actions\MakeQueueMaybeTenantAwareAction;
 use Glimmer\Tenancy\Models\Tenant;
 use Glimmer\Tenancy\TenancyServiceProvider;
 use Glimmer\Tenancy\TenantFinders\PathTenantFinder;
@@ -34,9 +34,6 @@ abstract class TestCase extends Orchestra
         );
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-
-        TenancyRoutes::landlord(__DIR__.'/../routes/landlord.php');
-        TenancyRoutes::tenant(__DIR__.'/../routes/tenant.php');
     }
 
     protected function getPackageProviders($app): array
@@ -68,6 +65,8 @@ abstract class TestCase extends Orchestra
         Config::set('scout.driver', 'database');
         Config::set('multitenancy.tenant_finder', PathTenantFinder::class);
         Config::set('multitenancy.tenant_model', Tenant::class);
-        Config::set('multitenancy.use_default_routes_groups', false);
+        Config::set('multitenancy.use_default_routes_groups', true);
+        Config::set('multitenancy.actions.make_queue_tenant_aware_action', MakeQueueMaybeTenantAwareAction::class);
+        Config::set('multitenancy.routes_prefix', '../../../../');
     }
 }
