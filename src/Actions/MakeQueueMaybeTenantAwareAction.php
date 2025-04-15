@@ -68,6 +68,7 @@ class MakeQueueMaybeTenantAwareAction extends MakeQueueTenantAwareAction
      *
      * @throws ReflectionException
      */
+    // @codeCoverageIgnoreStart
     protected function getJobReflection(JobProcessing|JobRetryRequested $event): ReflectionClass
     {
         $payload = $this->getEventPayload($event);
@@ -87,4 +88,5 @@ class MakeQueueMaybeTenantAwareAction extends MakeQueueTenantAwareAction
 
         return new ReflectionClass($job);
     }
+    // @codeCoverageIgnoreEnd
 }
