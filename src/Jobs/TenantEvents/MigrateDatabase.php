@@ -7,6 +7,7 @@ use Glimmer\Tenancy\Jobs\Concerns\TenantEventQueue;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class MigrateDatabase extends TenantEventQueue
 {
@@ -26,6 +27,8 @@ class MigrateDatabase extends TenantEventQueue
             $this->tenant->execute(function () {
                 try {
                     DB::connection()->getPdo();
+                    Schema::hasTable('migrations');
+                    DB::disconnect();
 
                     return true;
                 } catch (Exception $e) {
