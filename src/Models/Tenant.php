@@ -2,6 +2,7 @@
 
 namespace Glimmer\Tenancy\Models;
 
+use Database\Factories\TenantFactory;
 use Glimmer\Tenancy\Traits\HasTenantEvents;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -18,6 +19,14 @@ class Tenant extends SpatieTenant
     protected $keyType = 'string';
 
     protected $guarded = ['id'];
+
+    protected static function newFactory()
+    {
+        if (app()->runningUnitTests()) {
+            return null;
+        }
+        return TenantFactory::new();
+    }
 
     public function getDatabaseName(): string
     {
