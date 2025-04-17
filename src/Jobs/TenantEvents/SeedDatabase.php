@@ -15,7 +15,7 @@ class SeedDatabase extends TenantEventQueue
 
             Artisan::call('db:seed', array_merge(
                 ['--force' => true],
-                $exists ? ['--class' => 'TenantDatabaseSeeder'] : []
+                $exists ? ['--class' => 'tenant/DatabaseSeeder'] : []
             ));
         });
     }
