@@ -32,6 +32,23 @@ class TenancyServiceProvider extends ServiceProvider
         $this->autoRegisterTenancyRoutes();
     }
 
+    public function autoRegisterTenancyRoutes(): void
+    {
+        if (Config::get('multitenancy.use_default_routes_groups')) {
+            $routesPrefix = Config::get('multitenancy.routes_prefix', '');
+
+            $landlordFile = base_path($routesPrefix.'routes/landlord.php');
+            if (file_exists($landlordFile)) {
+                TenancyRoute::landlord()->group($landlordFile);
+            }
+
+            $tenantFile = base_path($routesPrefix.'routes/tenant.php');
+            if (file_exists($tenantFile)) {
+                TenancyRoute::tenant()->group($tenantFile);
+            }
+        }
+    }
+
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/multitenancy.php', 'multitenancy');
@@ -47,17 +64,8 @@ class TenancyServiceProvider extends ServiceProvider
         });
     }
 
-    public function autoRegisterTenancyRoutes(): void
-    {
-        if (Config::get('multitenancy.use_default_routes_groups')) {
-            $routesPrefix = Config::get('multitenancy.routes_prefix', '');
-
-            TenancyRoute::landlord()->group(base_path($routesPrefix.'routes/landlord.php'));
-            TenancyRoute::tenant()->group(base_path($routesPrefix.'routes/tenant.php'));
-        }
-    }
-
     // @codeCoverageIgnoreStart
+
     public function provides(): array
     {
         return [SpatieTenantsArtisanCommand::class];
