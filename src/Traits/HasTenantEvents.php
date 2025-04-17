@@ -31,7 +31,7 @@ trait HasTenantEvents
 
     protected static function isMigrateFresh(): void
     {
-        if (app()->runningInConsole() && app()->environment('local') && in_array(['migrate:fresh'], $_SERVER['argv'])) {
+        if (app()->runningInConsole() && app()->environment('local') && in_array('migrate:fresh', $_SERVER['argv'])) {
             Context::add('migrate:fresh', true);
         }
     }

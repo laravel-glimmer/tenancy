@@ -21,17 +21,17 @@ class MigrateDatabase extends TenantEventQueue
         });
     }
 
-    public function databaseExists(): false
+    public function databaseExists(): bool
     {
         if (Context::get('migrate:fresh', false)) {
-            $this->tenant->execute(function () {
+            return $this->tenant->execute(function () {
                 try {
                     DB::connection()->getPdo();
                     Schema::hasTable('migrations');
                     DB::disconnect();
 
                     return true;
-                } catch (Exception $e) {
+                } catch (Exception) {
                     return false;
                 }
             });
