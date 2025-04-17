@@ -2,25 +2,38 @@
 
 namespace Glimmer\Tenancy\Jobs\TenantEvents;
 
+use Exception;
 use Glimmer\Tenancy\Jobs\Concerns\TenantEventQueue;
-use Glimmer\Tenancy\Models\Tenant;
 use Illuminate\Support\Facades\Artisan;
-use Spatie\Multitenancy\Contracts\IsTenant;
+use Illuminate\Support\Facades\Context;
+use Illuminate\Support\Facades\DB;
 
 class MigrateDatabase extends TenantEventQueue
 {
-    public function __construct(public IsTenant|Tenant $tenant, public bool $fresh = false)
-    {
-        parent::__construct($tenant);
-    }
-
     public function handle(): void
     {
         $this->tenant->execute(function () {
-            Artisan::call($this->fresh ? 'migrate:fresh' : 'migrate', [
+            Artisan::call($this->databaseExists() ? 'migrate:fresh' : 'migrate', [
                 '--force' => true,
                 '--path' => 'database/migrations/tenant',
             ]);
         });
+    }
+
+    public function databaseExists(): false
+    {
+        if (Context::get('migrate:fresh', false)) {
+            $this->tenant->execute(function () {
+                try {
+                    DB::connection()->getPdo();
+
+                    return true;
+                } catch (Exception $e) {
+                    return false;
+                }
+            });
+        }
+
+        return false;
     }
 }
