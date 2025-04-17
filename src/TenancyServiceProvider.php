@@ -17,6 +17,7 @@ class TenancyServiceProvider extends ServiceProvider
             __DIR__.'/../config/multitenancy.php' => config_path('multitenancy.php'),
             __DIR__.'/../routes/landlord.php' => base_path('routes/landlord.php'),
             __DIR__.'/../routes/tenant.php' => base_path('routes/tenant.php'),
+            __DIR__.'/../database/factories' => database_path('factories'),
         ]);
 
         $this->publishesMigrations([
