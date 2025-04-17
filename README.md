@@ -83,7 +83,7 @@ Glimmer's `Tenant` model).
 - `MigrateDatabase` – Fired after tenant creation to apply migrations (expects migrations to be at:
   `database/migrations/tenant`).
 - `SeedDatabase` – Runs database seeders upon tenant creation.
-    - Defaults to `DatabaseSeeder.php` but will use `TenantDatabaseSeeder.php` if it exists.
+    - Defaults to `DatabaseSeeder.php` but will use `tenant/DatabaseSeeder.php` if it exists.
 
 #### Command Enhancements:
 

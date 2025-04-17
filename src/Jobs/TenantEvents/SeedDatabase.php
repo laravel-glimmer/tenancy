@@ -11,7 +11,7 @@ class SeedDatabase extends TenantEventQueue
     public function handle(): void
     {
         $this->tenant->execute(function () {
-            $exists = File::exists(database_path('seeders/TenantDatabaseSeeder.php'));
+            $exists = File::exists(database_path('seeders/tenant/DatabaseSeeder.php'));
 
             Artisan::call('db:seed', array_merge(
                 ['--force' => true],
