@@ -22,6 +22,8 @@ beforeEach(function () {
 });
 
 it('has `created` event with it\'s chain jobs', function () {
+    Tenant::factory()->make();
+
     $dispatcher = Tenant::getEventDispatcher();
 
     expect($dispatcher->hasListeners($this->eventName))->toBeTrue();
