@@ -3,6 +3,8 @@
 use Glimmer\Tenancy\Jobs\TenantEvents\CreateDatabase;
 use Glimmer\Tenancy\Jobs\TenantEvents\MigrateDatabase;
 use Glimmer\Tenancy\Models\Tenant;
+use Glimmer\Tenancy\Tests\Stubs\ExceptionHandler\CreatedException;
+use Glimmer\Tenancy\Tests\Stubs\Jobs\TenantEventWithException;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
@@ -12,14 +14,11 @@ beforeEach(function () {
         'created' => [
             CreateDatabase::class,
             MigrateDatabase::class,
-            'catch' => function () {
-                //
-            },
+            'catch' => CreatedException::class,
         ],
     ]);
 
     $this->eventName = 'eloquent.created: Glimmer\Tenancy\Models\Tenant';
-    $this->tenant = Tenant::factory()->make();
 });
 
 it('has `created` event with it\'s chain jobs', function () {
@@ -36,7 +35,7 @@ it('has `created` event with it\'s chain jobs', function () {
 it('dispatches `created` event', function () {
     Event::fake();
 
-    $this->tenant->save();
+    Tenant::factory()->create();
 
     Event::assertDispatched($this->eventName);
 });
@@ -44,7 +43,7 @@ it('dispatches `created` event', function () {
 it('`created` event dispatches jobs chain', function () {
     Queue::fake();
 
-    $this->tenant->save();
+    Tenant::factory()->create();
 
     Queue::assertPushedWithChain(CreateDatabase::class, [MigrateDatabase::class]);
 });
@@ -52,7 +51,29 @@ it('`created` event dispatches jobs chain', function () {
 it('has `catch` in the jobs chain', function () {
     Queue::fake();
 
-    $this->tenant->save();
+    Tenant::factory()->create();
 
     expect(count(Queue::pushed(CreateDatabase::class)->get(0)->chainCatchCallbacks))->toBe(1);
+});
+
+it('calls `catch` invokable callback', function () {
+    Config::set('multitenancy.tenant_events', [
+        'created' => [
+            TenantEventWithException::class,
+            'catch' => CreatedException::class,
+        ],
+    ]);
+
+    expect(fn () => Tenant::factory()->create())->toThrow('CreatedException');
+});
+
+it("throws error when `catch` doesn't implements EventExceptionHandler", function () {
+    Config::set('multitenancy.tenant_events', [
+        'created' => [
+            TenantEventWithException::class,
+            'catch' => TenantEventWithException::class,
+        ],
+    ]);
+
+    expect(fn () => Tenant::factory()->create())->toThrow(InvalidArgumentException::class);
 });

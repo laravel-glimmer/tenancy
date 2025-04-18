@@ -70,9 +70,7 @@ return [
             // \Glimmer\Tenancy\Jobs\TenantEvents\CreateDatabase::class,
             // \Glimmer\Tenancy\Jobs\TenantEvents\MigrateDatabase::class,
             // \Glimmer\Tenancy\Jobs\TenantEvents\SeedDatabase::class,
-            'catch' => function (Throwable $exception) {
-                // ...
-            },
+            // 'catch' => Not required, must be any class that implements `Glimmer\Tenancy\Jobs\Concerns\EventExceptionHandler` interface
         ],
     ],
 
