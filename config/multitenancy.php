@@ -62,7 +62,7 @@ return [
      * The jobs will receive the Tenant instance as `$tenant`, which can be used within the job.
      * The jobs are not tenant-aware (you can use the `$tenant` to execute tenant-specific logic).
      *
-     * Optionally, a 'catch' key can be added to an event with a callback that will be
+     * Optionally, a 'catch' key can be added to an event with an invokable class that will be
      * executed if a job in the chain fails, receiving a Throwable instance as an argument.
      */
     'tenant_events' => [
