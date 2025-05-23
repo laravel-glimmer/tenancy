@@ -3,6 +3,7 @@
 namespace Glimmer\Tenancy\Actions;
 
 use Glimmer\Tenancy\Jobs\Concerns\MaybeTenantAware;
+use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Queue\Events\JobRetryRequested;
 use Illuminate\Support\Facades\Context;
@@ -73,15 +74,21 @@ class MakeQueueMaybeTenantAwareAction extends MakeQueueTenantAwareAction
     {
         $payload = $this->getEventPayload($event);
 
+        $serializedCommand = $payload['data']['command'];
+
+        if (! str_starts_with($serializedCommand, 'O:')) {
+            $serializedCommand = app(Encrypter::class)->decrypt($serializedCommand);
+        }
+
         try {
-            $command = unserialize($payload['data']['command']);
+            $command = unserialize($serializedCommand);
         } catch (Throwable) {
             if ($tenantId = Context::get($this->currentTenantContextKey())) {
                 $tenant = app(IsTenant::class)::find($tenantId);
                 $tenant?->makeCurrent();
             }
 
-            $command = unserialize($payload['data']['command']);
+            $command = unserialize($serializedCommand);
         }
 
         $job = $this->getJobFromQueueable($command);
