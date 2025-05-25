@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {
+    $this->defaultConnection = DB::getDefaultConnection();
     $this->tenant = Tenant::factory()->create();
 
     $this->anotherTenant = Tenant::factory()->create([
@@ -27,7 +28,7 @@ test('creating tenant connection will merge configs', function () {
         $this->anotherTenant->connection_config?->toArray(),
     ));
 
-    $this->tenant->forgetCurrent();
+    $this->anotherTenant->forgetCurrent();
 });
 
 test('switching tenant will switch default connection', function () {
@@ -41,5 +42,5 @@ test('switching tenant will switch default connection', function () {
 
     Tenant::forgetCurrent();
 
-    expect(DB::getDefaultConnection())->toBe(Config::get('database.default'));
+    expect(DB::getDefaultConnection())->toBe($this->defaultConnection);
 });

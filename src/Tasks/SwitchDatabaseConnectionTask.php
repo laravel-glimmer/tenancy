@@ -20,30 +20,17 @@ class SwitchDatabaseConnectionTask implements SwitchTenantTask
         protected array $connectionsConfig,
         #[\Illuminate\Container\Attributes\Config('multitenancy.tenant_database_connection_name')]
         protected ?string $tenantConnection,
+        #[\Illuminate\Container\Attributes\Config('queue.connections')]
+        protected array|Collection $queueConnections,
     ) {
         $this->addedConnections = new Collection([]);
+        $this->queueConnections = new Collection($this->queueConnections);
 
         Config::set('multitenancy.landlord_database_connection_name', $this->defaultConnection);
 
         if (isset($_SERVER['LARAVEL_OCTANE'])) {
             app(IsTenant::class)->each(fn (IsTenant $tenant) => $this->createConnection($tenant));
         }
-    }
-
-    public function makeCurrent(IsTenant $tenant): void
-    {
-        if (! $this->addedConnections->get($tenant->getKey())) {
-            $this->createConnection($tenant);
-        }
-
-        Config::set('multitenancy.tenant_database_connection_name', $tenant->getKey());
-        DB::setDefaultConnection($tenant->getKey());
-    }
-
-    public function forgetCurrent(): void
-    {
-        Config::set('multitenancy.tenant_database_connection_name', null);
-        DB::setDefaultConnection($this->defaultConnection);
     }
 
     /**
@@ -72,5 +59,31 @@ class SwitchDatabaseConnectionTask implements SwitchTenantTask
         ));
 
         $this->addedConnections->put($tenant->getKey(), true);
+    }
+
+    public function makeCurrent(IsTenant $tenant): void
+    {
+        if (! $this->addedConnections->get($tenant->getKey())) {
+            $this->createConnection($tenant);
+        }
+
+        Config::set('multitenancy.tenant_database_connection_name', $tenant->getKey());
+        $this->setQueueConnection($this->defaultConnection);
+        DB::setDefaultConnection($tenant->getKey());
+    }
+
+    public function setQueueConnection($connection): void
+    {
+        $this->queueConnections
+            ->filter(fn ($c) => $c['driver'] == 'database')
+            ->filter(fn ($c) => $c['connection'] == null)
+            ->each(fn ($c, $name) => Config::set("queue.connections.$name.connection", $connection));
+    }
+
+    public function forgetCurrent(): void
+    {
+        Config::set('multitenancy.tenant_database_connection_name', null);
+        $this->setQueueConnection(null);
+        DB::setDefaultConnection($this->defaultConnection);
     }
 }
