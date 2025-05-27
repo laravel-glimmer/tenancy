@@ -31,7 +31,7 @@ class CreateDatabase extends TenantEventQueue
                 }
 
                 DB::disconnect();
-                DB::connection()->statement("CREATE DATABASE '{$databaseName}'");
+                DB::connection()->statement("CREATE DATABASE $databaseName");
                 break;
             case 'sqlsrv':
                 DB::connection()->statement(/** @lang TSQL */ "
