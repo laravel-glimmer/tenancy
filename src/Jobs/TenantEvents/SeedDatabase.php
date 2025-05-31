@@ -24,6 +24,11 @@ class SeedDatabase extends TenantEventQueue
         }
     }
 
+    public function displayName(): string
+    {
+        return $this->customSeeder ? $this->seeder : self::class;
+    }
+
     public function handle(): void
     {
         $this->tenant->execute(function () {
@@ -33,7 +38,6 @@ class SeedDatabase extends TenantEventQueue
                 throw new RuntimeException("Seeder class $this->seeder does not exist.");
             }
 
-            echo "Executing seeder $this->seeder\n";
             Artisan::call('db:seed', array_merge(
                 ['--force' => true],
                 $exists ? ['--class' => $this->seeder] : []
