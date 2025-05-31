@@ -85,6 +85,44 @@ Glimmer's `Tenant` model).
 - `SeedDatabase` – Runs database seeders upon tenant creation.
     - Defaults to `DatabaseSeeder.php` but will use `tenant/DatabaseSeeder.php` if it exists.
 
+#### Seeder Utilities:
+
+- `ChainSeeding` – A trait that allows chaining multiple seeders to be executed sequentially.
+    - Can be used in any class that needs to dispatch multiple seeders in a specific order.
+    - Supports both seeder class names and closures as seeders.
+    - Example usage:
+    ```php
+    use Glimmer\Tenancy\Traits\ChainSeeding;
+  
+    class MySeeder extends Seeder
+    {
+        use ChainSeeding;
+
+        public function run()
+        {
+            // Chain multiple seeders
+            $this->chain([
+                FirstSeeder::class,
+                SecondSeeder::class,
+                function() {
+                    // Custom seeding logic
+                }
+            ]);
+
+            // Dispatch the chain of seeders
+            $this->dispatchSeeders();
+        }
+    }
+    ```
+    - When using closures, make sure to register `SerializableClosure` as a maybe tenant aware job in your config:
+    ```php
+    // config/multitenancy.php
+    'maybe_tenant_aware_jobs' => [
+        // ...
+        \Laravel\SerializableClosure\SerializableClosure::class,
+    ],
+    ```
+
 #### Command Enhancements:
 
 - `IsTenantAware`|`TenantAware` – A modification to `Spatie/Commands/Concerns/TenantAware` trait enabling SQLite usage
@@ -120,7 +158,7 @@ Glimmer's `Tenant` model).
             return 'Landlord dashboard';
         })->name('dashboard'); // Named route: landlord.dashboard
       });
-  
+
       TenancyRoutes::tenant()->group(function () {
           Route::get('/home', function () {
               return 'Tenant home';
@@ -136,7 +174,7 @@ Glimmer's `Tenant` model).
   you can add the following to your `bootstrap/app.php` in to the exception handler:
   ```php
   use Glimmer\Tenancy\Facades\LandlordTenantException;
-  
+
   return Application::configure(basePath: dirname(__DIR__))
       ....
       ->withExceptions(function (Exceptions $exceptions) {
