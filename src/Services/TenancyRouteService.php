@@ -21,8 +21,7 @@ class TenancyRouteService
                 'web',
                 ForbidsTenant::class,
                 EnsureNoTenantSession::class,
-            ])
-            ->name('landlord.');
+            ]);
     }
 
     public function tenant(): RouteRegistrar
@@ -37,7 +36,6 @@ class TenancyRouteService
                 NeedsTenant::class,
                 EnsureValidTenantSession::class,
             ])
-            ->name('tenant.')
             ->prefix($prefix ?? '');
     }
 }

@@ -148,21 +148,21 @@ Glimmer's `Tenant` model).
   unauthorized access (this can be disabled in `multitenancy.php` config).
     - Tenant routes includes `NeedsTenant` and `EnsureValidTenantSession` middleware by default.
     - Landlord routes includes `ForbidsTenant` `EnsureNoTenantSession` middleware by default.
-    - Tenant routes names are prefixed with `tenant.` and landlord routes with `landlord.`, if not using
-      auto-registration, you can override this by calling `name()` method.
+    - When using route auto-registration tenant routes names are prefixed with `tenant.` and landlord routes with
+      `landlord.`.
     - If auto-registration is disabled, use `TenancyRoutes::landlord()` and/or `TenancyRoutes::tenant()` to register
       them by hand and group the routes you need.
     ```php
       TenancyRoutes::landlord()->group(function () {
         Route::get('/dashboard', function () {
             return 'Landlord dashboard';
-        })->name('dashboard'); // Named route: landlord.dashboard
+        })->name('dashboard');
       });
 
       TenancyRoutes::tenant()->group(function () {
           Route::get('/home', function () {
               return 'Tenant home';
-          })->name('home'); // Named route: tenant.home
+          })->name('home');
       });
     ```
 

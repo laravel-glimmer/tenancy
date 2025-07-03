@@ -40,12 +40,12 @@ class TenancyServiceProvider extends ServiceProvider
 
             $landlordFile = base_path($routesPrefix.'routes/landlord.php');
             if (file_exists($landlordFile)) {
-                TenancyRoute::landlord()->group($landlordFile);
+                TenancyRoute::landlord()->name('landlord.')->group($landlordFile);
             }
 
             $tenantFile = base_path($routesPrefix.'routes/tenant.php');
             if (file_exists($tenantFile)) {
-                TenancyRoute::tenant()->group($tenantFile);
+                TenancyRoute::tenant()->name('tenant.')->group($tenantFile);
             }
         }
     }
