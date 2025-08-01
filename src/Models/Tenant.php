@@ -4,13 +4,14 @@ namespace Glimmer\Tenancy\Models;
 
 use Database\Factories\TenantFactory;
 use Glimmer\Tenancy\Traits\HasTenantEvents;
+use Glimmer\Tenancy\Traits\TenantCallbackFixForConcurrency;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Multitenancy\Models\Tenant as SpatieTenant;
 
 class Tenant extends SpatieTenant
 {
-    use HasTenantEvents, SoftDeletes;
+    use HasTenantEvents, SoftDeletes, TenantCallbackFixForConcurrency;
 
     public $incrementing = false;
 
@@ -25,6 +26,7 @@ class Tenant extends SpatieTenant
         if (app()->runningUnitTests()) {
             return null;
         }
+
         return TenantFactory::new();
     }
 
